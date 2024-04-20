@@ -6,6 +6,13 @@ import org.springframework.lang.Nullable;
 public class StringUtil {
 	
 	/**
+	 * null 관련 함수
+	 * contains 관련 함수
+	 * equals 관련 함수
+	 */
+	
+	
+	/**
 	 * @methodName      : isEmpty
 	 * @author          : DaeGeun Ki
 	 * @date            : 2024. 4. 16.
@@ -17,6 +24,11 @@ public class StringUtil {
 	public static boolean isEmpty(@Nullable CharSequence  str) {
 		
 		return StringUtils.isEmpty(str);
+	}
+	
+	public static boolean isEmpty(@Nullable Object obj) {
+		
+		return obj == null || isEmpty(obj.toString());
 	}
 	
 	/**
