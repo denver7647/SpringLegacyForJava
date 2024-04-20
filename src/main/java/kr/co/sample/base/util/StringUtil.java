@@ -16,7 +16,7 @@ public class StringUtil {
 	 */
 	public static boolean isEmpty(@Nullable CharSequence  str) {
 		
-		return StringUtils.isAnyEmpty(str);
+		return StringUtils.isEmpty(str);
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class StringUtil {
 	 */
 	public static boolean isNotEmpty(@Nullable CharSequence  str) {
 		
-		return !StringUtils.isAnyEmpty(str);
+		return StringUtils.isNotEmpty(str);
 	}
 	
 	/**
