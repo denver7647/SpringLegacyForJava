@@ -7,14 +7,11 @@ import javax.servlet.ServletRegistration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import kr.co.sample.base.filter.GlobalBaseFilter;
 import kr.co.sample.base.listener.GlobalHttpSessionAttributeListener;
@@ -23,9 +20,6 @@ import kr.co.sample.base.listener.GlobalServletContextAttributeListener;
 import kr.co.sample.base.listener.GlobalServletContextListener;
 import kr.co.sample.base.listener.GlobalServletRequestListener;
 
-@Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = "kr.co.sample")
 public class WebMvcConfig implements WebApplicationInitializer  {
 	
 	Logger log = LoggerFactory.getLogger(WebMvcConfig.class);
@@ -33,14 +27,13 @@ public class WebMvcConfig implements WebApplicationInitializer  {
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		// dispatcherServlet 설정
-		
 		log.debug("==================== onStartup ====================");
 		
 		registDispatcherServlet(servletContext);
-		registRootAppContext(servletContext);
-		registUTF8Filter(servletContext);
-		registFilter(servletContext);
-		registListener(servletContext);
+		//registRootAppContext(servletContext);
+		//registUTF8Filter(servletContext);
+		//registFilter(servletContext); 
+		//registListener(servletContext);
 	
 	}
 
@@ -54,7 +47,7 @@ public class WebMvcConfig implements WebApplicationInitializer  {
 		//dispatcherServlet 설정
 		AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
 		
-		servletAppContext.register(ServletAppContext.class);
+		servletAppContext.register(ServletConfig.class);
 		
 		DispatcherServlet dispatcherServlet = new DispatcherServlet(servletAppContext);
 		ServletRegistration.Dynamic servlet = servletContext.addServlet("dispatcher", dispatcherServlet);
@@ -129,6 +122,7 @@ public class WebMvcConfig implements WebApplicationInitializer  {
 		servletContext.addListener(GlobalHttpSessionListener.class);
 		
 	}
+	
 	
 
 }
