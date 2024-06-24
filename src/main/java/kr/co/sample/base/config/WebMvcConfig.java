@@ -7,6 +7,7 @@ import javax.servlet.ServletRegistration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -20,6 +21,7 @@ import kr.co.sample.base.listener.GlobalServletContextAttributeListener;
 import kr.co.sample.base.listener.GlobalServletContextListener;
 import kr.co.sample.base.listener.GlobalServletRequestListener;
 
+
 public class WebMvcConfig implements WebApplicationInitializer  {
 	
 	Logger log = LoggerFactory.getLogger(WebMvcConfig.class);
@@ -30,10 +32,10 @@ public class WebMvcConfig implements WebApplicationInitializer  {
 		log.debug("==================== onStartup ====================");
 		
 		registDispatcherServlet(servletContext);
-		//registRootAppContext(servletContext);
-		//registUTF8Filter(servletContext);
-		//registFilter(servletContext); 
-		//registListener(servletContext);
+		registRootAppContext(servletContext);
+		registUTF8Filter(servletContext);
+		registFilter(servletContext); 
+		registListener(servletContext);
 	
 	}
 
@@ -83,6 +85,7 @@ public class WebMvcConfig implements WebApplicationInitializer  {
 	
 		FilterRegistration.Dynamic filter = servletContext.addFilter("encodingFilter", CharacterEncodingFilter.class);
 		filter.setInitParameter("encoding", "UTF-8");
+		filter.setInitParameter("forceEncoding", "true");
 		filter.addMappingForServletNames(null, false, "dispatcher");
 		
 	}

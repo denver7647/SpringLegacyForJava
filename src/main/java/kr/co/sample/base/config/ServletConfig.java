@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.format.FormatterRegistry;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.validation.Validator;
@@ -29,11 +30,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import kr.co.sample.base.interceptor.GlobalBaseInterceptor;
 
 @Configuration
+@EnableAspectJAutoProxy
 @EnableWebMvc
 @ComponentScan(basePackages = "kr.co.sample")
 public class ServletConfig implements WebMvcConfigurer {
 
 	Logger log = LoggerFactory.getLogger(ServletConfig.class);
+	
+	@Autowired
+	ValidatorConfig validatorConfig;
 	
 	/**
 	 * @methodName      : addArgumentResolvers
@@ -61,6 +66,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		log.info("ServletContext addCorsMappings.....");
+		
 		registry.addMapping("/") // CORS를 적용할 패턴을 지정해준다.
 				.allowedOrigins("https://www.naver.com", "https://wwww.google.com") // 허용할 출처 지정
 				.allowedMethods("GET", "POST") // 허용할 HTTP 메서드 지정
@@ -68,6 +74,7 @@ public class ServletConfig implements WebMvcConfigurer {
 				.exposedHeaders("Authorization") // 브라우저에 노출할 응답 헤더 지정
 				.allowCredentials(true) // 자격 증명 허용 여부 지정
 				.maxAge(3600); // preflight 요청 결과를 캐시할 시간(초) 지정
+				
 				
 	}
 	
@@ -196,7 +203,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	 */
 	@Override
 	public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-
+/*
 		log.info(
 				"============================== ServletContext configureContentNegotiation ==============================");
 	     configurer
@@ -207,7 +214,7 @@ public class ServletConfig implements WebMvcConfigurer {
          .mediaType("xml", MediaType.APPLICATION_XML) // "xml" 파일 확장자에 대한 콘텐츠 타입을 설정합니다.
          .mediaType("json", MediaType.APPLICATION_JSON); // "json" 파일 확장자에 대한 콘텐츠 타입을 설정합니다.
 
-
+*/
 	}
 	
 	/**
@@ -216,14 +223,14 @@ public class ServletConfig implements WebMvcConfigurer {
 	 * @date            : 2024. 4. 21.
 	 * @description     : 기본 서블릿 처리활성 , 비활성화
 	 * 
-	 * @param Configurer
+	 * @param configurer
 	 */
 	@Override
-	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer Configurer) {
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		log.info("============================== ServletContext configureDefaultServletHandling ==============================");
 		
-		//Configurer.enable(); //모든 기본처리
-		//Configurer.enable("/resources"); //해당 패턴에만 기본 서블릿 처리
+		//configurer.enable(); //모든 기본처리
+		//configurer.enable("/resources"); //해당 패턴에만 기본 서블릿 처리
 	}
 	
 	/**
@@ -232,50 +239,93 @@ public class ServletConfig implements WebMvcConfigurer {
 	 * @date            : 2024. 4. 21.
 	 * @description     : 예외가 발생했을때 처리하는 용도 
 	 * 					  여기에 등록을 하고 HandlerExceptionResolver 상속받는 클래스를 구현 
-	 * 				      굳이 필요는 없을듯
 	 * 
-	 * @param arg0
+	 * @param resolvers
 	 */
 	@Override
-	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> arg0) {
+	public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
 		log.info(
 				"============================== ServletContext configureHandlerExceptionResolvers ==============================");
 
 	}
 
+	/**
+	 * @methodName      : configureMessageConverters
+	 * @author          : DaeGeun Ki
+	 * @date            : 2024. 6. 14.
+	 * @description     : 데이터 가공 용도
+	 * 
+	 * @param converters
+	 */
 	@Override
-	public void configureMessageConverters(List<HttpMessageConverter<?>> arg0) {
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 		log.info(
 				"============================== ServletContext configureMessageConverters ==============================");
 
 	}
-
+	/**
+	 * @methodName      : configurePathMatch
+	 * @author          : DaeGeun Ki
+	 * @date            : 2024. 6. 14.
+	 * @description     : URL 패턴 매칭 설정 (URL 커스텀 매칭)
+	 * 					  음... 의미없을듯
+	 * @param configurer
+	 */
 	@Override
-	public void configurePathMatch(PathMatchConfigurer arg0) {
+	public void configurePathMatch(PathMatchConfigurer configurer) {
 		log.info("============================== ServletContext configurePathMatch ==============================");
+		
+		// URL 패턴의 끝에 슬래시를 매칭하도록 설정
+        // configurer.setUseTrailingSlashMatch(false);
 
+        // 확장자를 사용하는 URL 패턴은 매칭하지 않도록 설정
+        // configurer.setUseSuffixPatternMatch(false);
+        
+        // 특정 컨트롤러 클래스에 대해 URL 패턴 접두사를 추가
+        //configurer.addPathPrefix("/api", MyController.class);
+		
 	}
 
-	/******************************************************************
-	 * Controller의 메서드에서 반환하는 문자열 앞 뒤에 붙힐 경로를 셋팅
-	 ******************************************************************/
+	/**
+	 * @methodName      : configureViewResolvers
+	 * @author          : DaeGeun Ki
+	 * @date            : 2024. 6. 14.
+	 * @description     : Controller의 메서드에서 반환하는 문자열 앞 뒤에 붙힐 경로를 셋팅
+	 * 
+	 * @param registry
+	 */
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		log.info("============================== ServletContext configureViewResolvers ==============================");
 
-		registry.jsp("/WEB-INF/views", ".jsp");
+		registry.jsp("/WEB-INF/views/", ".jsp");
 
 	}
-
+	/**
+	 * @methodName      : extendHandlerExceptionResolvers
+	 * @author          : DaeGeun Ki
+	 * @date            : 2024. 6. 14.
+	 * @description     : 전역적인 예외 처리 방식
+	 * 
+	 * @param resolvers
+	 */
 	@Override
-	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> arg0) {
+	public void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) {
 		log.info(
 				"============================== ServletContext extendHandlerExceptionResolvers ==============================");
-
+		
 	}
-
+	
+	/**
+	 * @methodName      : extendMessageConverters
+	 * @author          : DaeGeun Ki
+	 * @date            : 2024. 6. 14.
+	 * @description     : 데이터 가공 용도
+	 * 
+	 * @param converters
+	 */
 	@Override
-	public void extendMessageConverters(List<HttpMessageConverter<?>> arg0) {
+	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
 		log.info(
 				"============================== ServletContext extendMessageConverters ==============================");
 
@@ -291,7 +341,7 @@ public class ServletConfig implements WebMvcConfigurer {
 	@Override
 	public Validator getValidator() {
 		log.info("============================== ServletContext getValidator ==============================");
-		return null;
+		return validatorConfig.validator();
 	}
 	
 
